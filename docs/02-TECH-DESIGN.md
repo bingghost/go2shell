@@ -30,11 +30,12 @@ go2shell/                         # git 根目录
 │   │   ├── TerminalKind.swift
 │   │   ├── Settings.swift
 │   │   ├── LegacyMigration.swift
-│   │   └── LaunchRouter.swift
+│   │   ├── LaunchRouter.swift
+│   │   ├── Go2TermError.swift
+│   │   └── AppleScriptRunner.swift   # 只依赖 Foundation，放在 Core 里方便单元测试（M2 实测后调整）
 │   └── Go2Term/                  # App：入口、系统交互、UI
 │       ├── main.swift
 │       ├── AppController.swift
-│       ├── AppleScriptRunner.swift
 │       ├── FinderLocator.swift
 │       ├── Launchers/
 │       │   ├── TerminalLauncher.swift        # 协议 + 工厂
@@ -146,6 +147,8 @@ public static func route(_ ctx: LaunchContext) -> LaunchAction
 
 ### 3.2 AppleScriptRunner
 
+> 位置：`Go2TermCore`（M2 调整）。它只用到 Foundation 的 `NSAppleScript` / `NSAppleEventDescriptor`，四字符码自己定义，不需要 import Carbon；标注了 `@MainActor`。单元测试里有 echo 往返测试，包括模拟注入的字符串。
+
 把固定的脚本源码编译一次，再用 Apple Event 调用其中的 handler，参数作为 descriptor 传进去：
 
 ```swift
@@ -179,6 +182,7 @@ on selectedFolderPath()  -- P1 F15：只有选中一个文件夹时才返回
     ...
 end selectedFolderPath
 ```
+- **M2 实测结果**：Finder 的「最近使用」窗口的 `target` 是一个 canned search 文件，转换成 `alias` 时会失败，于是返回 `::NOT_FILESYSTEM::`，符合预期。`on error` 里遇到 -1743 会重新抛出，避免把权限错误当成虚拟位置。
 - 返回值语义：`::NO_WINDOW::` 退到 `~/Desktop`（用 `FileManager.default.homeDirectoryForCurrentUser` 拼出来，**不要用 `URL(string:)`**）；`::NOT_FILESYSTEM::` 抛出 `notFileSystem`。
 - 拿到路径后再确认一次：路径存在而且是目录。如果是文件（理论上不会出现），就取它的父目录。
 - **Finder 最前窗口的定义**：`front Finder window` 会跳过「显示简介」之类的非浏览窗口，正好符合需要。

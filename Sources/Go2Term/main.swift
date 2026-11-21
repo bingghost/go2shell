@@ -1,8 +1,7 @@
 import AppKit
 import Go2TermCore
 
-// M0 placeholder: show an empty window titled "Go2Term".
-// Launch routing, Finder integration and settings UI arrive in M1–M5.
+// Entry point. Full launch orchestration (terminal opening, settings, reopen) lands in M3/M4.
 
 @MainActor
 final class PlaceholderAppDelegate: NSObject, NSApplicationDelegate {
@@ -32,7 +31,30 @@ final class PlaceholderAppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-let app = NSApplication.shared
-let delegate = PlaceholderAppDelegate()
-app.delegate = delegate
-app.run()
+@MainActor
+func printFinderPath() -> Int32 {
+    do {
+        let url = try FinderLocator().frontWindowDirectory()
+        print(url.path)
+        return 0
+    } catch {
+        FileHandle.standardError.write(Data("error: \(error)\n".utf8))
+        return 1
+    }
+}
+
+let context = LaunchContext(
+    arguments: CommandLine.arguments,
+    frontmostBundleID: NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
+    optionKeyDown: NSEvent.modifierFlags.contains(.option)
+)
+
+switch LaunchRouter.route(context) {
+case .printFinderPath:
+    exit(MainActor.assumeIsolated { printFinderPath() })
+default:
+    let app = NSApplication.shared
+    let delegate = PlaceholderAppDelegate()
+    app.delegate = delegate
+    app.run()
+}
