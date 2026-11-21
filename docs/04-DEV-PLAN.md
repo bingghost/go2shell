@@ -143,7 +143,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 | 里程碑 | 状态 | 完成日期 | 备注 |
 | --- | --- | --- | --- |
 | M0 | ✅ | 2026-11-21 | SPM+Makefile 骨架；Apple Development 签名 + hardened runtime；占位窗口经 osascript 验证 |
-| M1 | ⬜ | | |
+| M1 | ✅ | 2026-11-21 | 核心逻辑 + 49 个 Swift Testing 测试（ShellQuote 经 /bin/sh 往返） |
 | M2 | ⬜ | | |
 | M3 | ⬜ | | |
 | M4 | ⬜ | | |
