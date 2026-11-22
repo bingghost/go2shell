@@ -56,7 +56,7 @@
 ## G7 图标与一键装到工具栏（M7）
 
 ```
-/goal 完成 Go2Shell 的里程碑 M7（图标与工具栏）。先阅读 docs/02-TECH-DESIGN.md 的 §3.8，以及 REQ-UI-07、REQ-UI-08。(1) 写 Scripts/make-icon.swift：用 AppKit 或 CoreGraphics 画一个原创图标，不要模仿旧 Go2Shell 的图标。图标是一个圆角方块，里面有终端提示符 >_ 和一个表示「进入」的箭头，生成全部尺寸并用 iconutil 打包成 Resources/AppIcon.icns；在 Makefile 里加上 make icon；把预览图保存为 docs/images/icon-preview.png 给我看。(2) 一键装到工具栏：先执行 defaults export com.apple.finder 把当前配置备份到 scratchpad，然后请我手动把某个 App 拖到工具栏，你再导出一次并对比两次的差异，弄清楚 NSToolbar Configuration Browser 的结构。如果可行，就实现 ToolbarInstaller：先把配置备份到 ~/Library/Application Support/Go2Shell/，修改前弹窗征得确认，然后重启 Finder，同时提供「从工具栏移除」；在设置窗口里加上对应的按钮。如果实测发现不可行，就把结论写进技术文档 §3.8，并在 REQ-UI-08 上标注放弃。改动 Finder 配置和执行 killall Finder 之前必须先问我。完成标准：在深色和浅色模式下，图标在 Finder 工具栏上都清楚（请我确认）；REQ-UI-08 要么已经实现并通过安装和移除的往返测试，要么已经写明放弃的原因；make test 和 make build 都通过；进度表里 M7 已标为完成；已完成本地 commit，message 以 "M7:" 开头。
+/goal 完成 Go2Shell 的里程碑 M7（图标与工具栏）。先阅读 docs/02-TECH-DESIGN.md 的 §3.8，以及 REQ-UI-07、REQ-UI-08。(1) 写 Scripts/make-icon.swift：用 AppKit 或 CoreGraphics 画一个原创图标：不要底板和阴影，图形以外全部透明，银灰色渐变（和旧 Go2Shell 在工具栏上的风格一致，但图案不照搬），图形是终端提示符 >_，其中 > 画成表示「进入」的箭头，生成全部尺寸并用 iconutil 打包成 Resources/AppIcon.icns；在 Makefile 里加上 make icon；把预览图保存为 docs/images/icon-preview.png 给我看。(2) 一键装到工具栏：先执行 defaults export com.apple.finder 把当前配置备份到 scratchpad，然后请我手动把某个 App 拖到工具栏，你再导出一次并对比两次的差异，弄清楚 NSToolbar Configuration Browser 的结构。如果可行，就实现 ToolbarInstaller：先把配置备份到 ~/Library/Application Support/Go2Shell/，修改前弹窗征得确认，然后重启 Finder，同时提供「从工具栏移除」；在设置窗口里加上对应的按钮。如果实测发现不可行，就把结论写进技术文档 §3.8，并在 REQ-UI-08 上标注放弃。改动 Finder 配置和执行 killall Finder 之前必须先问我。完成标准：在深色和浅色模式下，图标在 Finder 工具栏上都清楚（请我确认）；REQ-UI-08 要么已经实现并通过安装和移除的往返测试，要么已经写明放弃的原因；make test 和 make build 都通过；进度表里 M7 已标为完成；已完成本地 commit，message 以 "M7:" 开头。
 ```
 
 ## G8 完整测试与发布 v1.0.0（M8）

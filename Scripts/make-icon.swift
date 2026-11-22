@@ -1,8 +1,10 @@
 // Draws the Go2Shell app icon and packs it into Resources/AppIcon.icns.
 // Run from the repository root:  swift Scripts/make-icon.swift   (or `make icon`)
 //
-// Design: a wide rounded rectangle with an arrow that doubles as the shell prompt ">" and a
-// cursor "_" — "go into this folder, in a terminal". Also writes docs/images/icon-preview.png.
+// Design: no background plate. A silver-gray arrow that doubles as the shell prompt ">" plus a
+// cursor "_" on a fully transparent canvas, in the spirit of the legacy Go2Shell toolbar icon.
+// The mid gray is chosen to stay readable on both the light and the dark Finder toolbar.
+// Also writes docs/images/icon-preview.png.
 
 import CoreGraphics
 import Foundation
@@ -25,60 +27,44 @@ func drawIcon(in context: CGContext, pixels: Int) {
     let scale = CGFloat(pixels) / canvas
     context.scaleBy(x: scale, y: scale)
 
-    // Body: a wide rounded rectangle that fills almost the whole canvas width. The icon is
-    // mostly seen in the Finder toolbar, where the standard 824pt square (with its 100pt
-    // margins) looks small next to other toolbar items.
-    let body = CGRect(x: 24, y: 142, width: 976, height: 740)
-    let bodyPath = CGPath(roundedRect: body, cornerWidth: 170, cornerHeight: 170, transform: nil)
+    // Glyphs: thick round strokes so they survive at 16px. Authored around (512, 520) and
+    // enlarged so the glyph spans the canvas width, leaving a 40pt transparent margin.
+    var transform = CGAffineTransform(translationX: 512, y: 512)
+        .scaledBy(x: 1.6, y: 1.6)
+        .translatedBy(x: -512, y: -520)
 
-    // Soft drop shadow under the body.
-    context.saveGState()
-    context.setShadow(offset: CGSize(width: 0, height: -8), blur: 14, color: color(0x000000, alpha: 0.30))
-    context.addPath(bodyPath)
-    context.setFillColor(color(0x3A3FD6))
-    context.fillPath()
-    context.restoreGState()
+    let strokes = CGMutablePath()
+    // Arrow / prompt.
+    strokes.move(to: CGPoint(x: 262, y: 530))
+    strokes.addLine(to: CGPoint(x: 548, y: 530))
+    strokes.move(to: CGPoint(x: 410, y: 668))
+    strokes.addLine(to: CGPoint(x: 548, y: 530))
+    strokes.addLine(to: CGPoint(x: 410, y: 392))
+    // Cursor.
+    strokes.move(to: CGPoint(x: 630, y: 372))
+    strokes.addLine(to: CGPoint(x: 762, y: 372))
 
-    // Body gradient, lighter at the top.
+    let outline = strokes.copy(strokingWithWidth: 88, lineCap: .round, lineJoin: .round, miterLimit: 10)
+    guard let glyph = outline.copy(using: &transform) else { return }
+    let bounds = glyph.boundingBoxOfPath
+
+    // Silver gradient, lighter at the top. Nothing is drawn outside the glyph (no plate, no
+    // shadow), so everything around it stays transparent.
     context.saveGState()
-    context.addPath(bodyPath)
-    context.clip()
+    context.addPath(glyph)
+    context.clip(using: .winding)
     let gradient = CGGradient(
         colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
-        colors: [color(0x5C93FF), color(0x3438C8)] as CFArray,
-        locations: [0, 1]
+        colors: [color(0xA4A9B1), color(0x8A8F97), color(0x6F747C)] as CFArray,
+        locations: [0, 0.5, 1]
     )!
     context.drawLinearGradient(
         gradient,
-        start: CGPoint(x: 512, y: body.maxY),
-        end: CGPoint(x: 512, y: body.minY),
+        start: CGPoint(x: 512, y: bounds.maxY),
+        end: CGPoint(x: 512, y: bounds.minY),
         options: []
     )
     context.restoreGState()
-
-    // Glyphs: thick round strokes so they survive at 16px. Drawn around (512, 520) and
-    // enlarged to use the wider body.
-    context.translateBy(x: 512, y: 512)
-    context.scaleBy(x: 1.2, y: 1.2)
-    context.translateBy(x: -512, y: -520)
-    context.setLineWidth(88)
-    context.setLineCap(.round)
-    context.setLineJoin(.round)
-
-    // Arrow / prompt.
-    context.setStrokeColor(color(0xFFFFFF))
-    context.move(to: CGPoint(x: 262, y: 530))
-    context.addLine(to: CGPoint(x: 548, y: 530))
-    context.move(to: CGPoint(x: 410, y: 668))
-    context.addLine(to: CGPoint(x: 548, y: 530))
-    context.addLine(to: CGPoint(x: 410, y: 392))
-    context.strokePath()
-
-    // Cursor.
-    context.setStrokeColor(color(0xBFE3FF))
-    context.move(to: CGPoint(x: 630, y: 372))
-    context.addLine(to: CGPoint(x: 762, y: 372))
-    context.strokePath()
 }
 
 func renderPNG(pixels: Int, to url: URL) throws {

@@ -111,7 +111,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 
 ### M7 图标与工具栏
 **任务**
-- `Scripts/make-icon.swift`：原创图标。思路是一个圆角方块，里面画终端提示符 `>_` 和一个箭头。（实际做成了横向的圆角矩形，约 4:3、左右几乎占满画布：标准的正方形图标四周留白多，在 Finder 工具栏上显得小。箭头同时充当提示符 `>`。）**不要模仿旧 Go2Shell 的图标**。
+- `Scripts/make-icon.swift`：原创图标。最初的思路是一个圆角方块，里面画终端提示符 `>_` 和一个箭头，实际做成过蓝色的横向圆角矩形。2026-11-22 按用户要求改掉：**不要底板，也不要阴影，图形以外全部透明**；配色用银灰色渐变，和旧 Go2Shell 在工具栏上的风格一致，深色和浅色工具栏下都能看清。图形是一个箭头（同时充当提示符 `>`）加光标 `_`，左右几乎占满画布，在 Finder 工具栏上不显得小。图形本身是原创的，不照搬旧 Go2Shell 的图案。
 - 写 `make icon`。
 - 一键装到工具栏：先实测 Finder plist 的结构。可行就实现，并且要备份、弹窗确认、提供卸载；不可行就把结论写进 `docs/02-TECH-DESIGN.md` §3.8，然后放弃这项。
 
@@ -151,5 +151,5 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 | M4 | ✅ | 2026-11-22 | AppController、ErrorPresenter、os.Logger 日志；--open 自测从启动到出现窗口 309ms。**工具栏点击、⌥、reopen、拒绝授权这 4 项手工测试按用户要求移到 M8 测试清单** |
 | M5 | ✅ | 2026-11-22 | SwiftUI 设置窗口；迁移实测通过（iTerm2、命令、didMigrate=1，只迁移一次）；en / zh-Hans 窗口标题验证通过；源码里没有写死的中文。**`Use Window` 语义和界面截图确认移到 M8 测试清单** |
 | M6 | ⬜ | | 2026-11-22 code review 后改了 Terminal.app 新标签页脚本（确认标签页数量增加后才发命令，失败退回新窗口）和 GenericLauncher 的超时处理，脚本只做了编译检查。**待 M8 手工测**：新标签页正常路径、最前面是 Terminal 设置窗口、拒绝 System Events 授权、第三方终端首次启动的确认框 |
-| M7 | ⬜ | | 图标部分已提前完成（2026-11-22）：`Scripts/make-icon.swift`、`make icon`、`Resources/AppIcon.icns`、`docs/images/icon-preview.png`。**未做**：深色和浅色工具栏下的实际效果确认、一键装到工具栏（REQ-UI-08） |
+| M7 | ⬜ | | 图标部分已提前完成（2026-11-22）：`Scripts/make-icon.swift`、`make icon`、`Resources/AppIcon.icns`、`docs/images/icon-preview.png`。同日改成银灰色、无底板、背景透明的版本。**未做**：深色和浅色工具栏下的实际效果确认、一键装到工具栏（REQ-UI-08） |
 | M8 | ⬜ | | |
