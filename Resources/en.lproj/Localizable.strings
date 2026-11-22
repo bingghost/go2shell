@@ -1,2 +1,14 @@
-/* Go2Term English strings. Populated from M4/M5. */
+/* Go2Term — English */
 "app.name" = "Go2Term";
+"settings.title" = "Go2Term Settings";
+
+"button.ok" = "OK";
+"button.openSystemSettings" = "Open System Settings";
+
+"error.automationDenied.title" = "Go2Term is not allowed to control %@";
+"error.automationDenied.body" = "Allow Go2Term to control %@ in System Settings › Privacy & Security › Automation, then try again.";
+"error.notFileSystem.title" = "This Finder window is not a folder";
+"error.notFileSystem.body" = "Locations such as Recents or AirDrop have no folder to open a terminal in. Open a regular folder and try again.";
+"error.pathNotFound.title" = "The folder no longer exists";
+"error.targetNotRunning.title" = "%@ is not responding";
+"error.scriptFailed.title" = "Could not open the terminal";

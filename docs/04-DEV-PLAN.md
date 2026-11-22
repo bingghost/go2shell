@@ -133,6 +133,8 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 - 如果已经配置了远端，就 push（按全局规则：push 当前分支和 tag）
 
 ## 协作约定
+- **2026-11-22 用户指示**：先把所有代码写完，所有需要用户动手的测试集中到 M8 的 `docs/TEST-CHECKLIST.md` 里一次做完。
+
 - 需要用户点击的步骤（TCC 授权弹窗、拖到工具栏、切换系统语言、卸载终端）：goal 执行到这一步时停下来，用一句话告诉用户要做什么，等用户确认后再继续。
 - 不复制 `reference-solarhell/` 里的代码，只能参考思路。
 - 发现文档里的设计和实测结果不一致时：以实测为准，同时更新 `docs/02-TECH-DESIGN.md`，在 commit message 里说明。
@@ -146,7 +148,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 | M1 | ✅ | 2026-11-21 | 核心逻辑 + 49 个 Swift Testing 测试（ShellQuote 经 /bin/sh 往返） |
 | M2 | ✅ | 2026-11-21 | AppleScriptRunner（handler 传参）+ FinderLocator；--print-finder-path 三种情况实测通过 |
 | M3 | ✅ | 2026-11-22 | iTerm2 热启动 10/10、Terminal.app 冷启动和热启动 10/10 通过；**iTerm2 冷启动推迟到 M8 测**（会话就跑在 iTerm 里，没法自己退出 iTerm 来测；用 Scripts/check-iterm-cold.sh 测） |
-| M4 | ⬜ | | |
+| M4 | ✅ | 2026-11-22 | AppController、ErrorPresenter、os.Logger 日志；--open 自测从启动到出现窗口 309ms。**工具栏点击、⌥、reopen、拒绝授权这 4 项手工测试按用户要求移到 M8 测试清单** |
 | M5 | ⬜ | | |
 | M6 | ⬜ | | |
 | M7 | ⬜ | | |
