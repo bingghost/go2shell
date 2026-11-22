@@ -1,42 +1,65 @@
-# Go2Shell
+<p align="center">
+  <img src="docs/images/icon-preview.png" alt="Go2Shell icon" width="160">
+</p>
 
-<img src="docs/images/icon-preview.png" alt="Go2Shell 图标" width="128">
+<h1 align="center">Go2Shell</h1>
 
-放在 Finder 工具栏上的 macOS 小工具：点一下，就在当前 Finder 文件夹打开你常用的终端，然后自己退出。
+<p align="center">
+  A Finder toolbar button for macOS: click it to open your terminal in the folder you are looking at.
+</p>
 
-它是 ZipZapMac 的旧版 Go2Shell 2.5 的替代品，沿用了这个名字。旧版只有 x86_64 版本，在 Apple Silicon 上要靠 Rosetta 2 运行，而且多年没有更新；这个项目用 Swift 重写，原生支持 Apple Silicon。
+<p align="center">
+  <img src="https://img.shields.io/badge/macOS-14%2B-blue" alt="macOS 14 or later">
+  <img src="https://img.shields.io/badge/Swift-6-orange" alt="Swift 6">
+  <img src="https://img.shields.io/badge/Apple%20Silicon-native-brightgreen" alt="Native on Apple Silicon">
+  <img src="https://img.shields.io/badge/status-in%20development-yellow" alt="Status: in development">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT license"></a>
+</p>
 
-> **当前状态：开发中。** 核心功能已经可用（里程碑 M0–M5 完成），还没有发布安装包，需要自己从源码构建。第三方终端的支持和部分手工测试尚未完成，详见[支持的终端](#支持的终端)和[已知限制](#已知限制)。
+<p align="center">
+  <b>English</b> · <a href="README.zh-CN.md">简体中文</a>
+</p>
 
-## 能做什么
+---
 
-- **一键打开终端**：在 Finder 里点工具栏上的 Go2Shell，终端就在当前文件夹打开。Finder 没有打开窗口时使用桌面。
-- **自定义命令**：打开终端后执行的命令可以改，默认是 `cd %PATH%; clear; pwd`。`%PATH%` 会被替换成已做好 shell 引用的路径，文件夹名里有空格、引号、`$`、中文都不需要自己加引号。
-- **新窗口或新标签页**：可以选择每次开新窗口，还是在已有窗口里开新标签页。
-- **选中文件夹优先**（可选）：在 Finder 里恰好选中一个文件夹时，在该文件夹里打开，而不是当前窗口的文件夹。
-- **沿用旧版 Go2Shell 的设置**：第一次运行时读取旧 Go2Shell 的终端、命令和窗口模式，只迁移一次。
-- **出错有提示**：没有自动化权限、当前窗口是「最近使用」「隔空投送」这类虚拟位置、文件夹已被删除时，会弹窗说明原因；权限问题可以直接跳到系统设置。
-- **中英文界面**：跟随系统语言。
+## Why
 
-## 支持的终端
+The original Go2Shell 2.5 by ZipZapMac is an Intel-only app that has not been updated in years. It runs on Apple Silicon only through Rosetta 2, and after a macOS update it stopped working properly.
 
-| 终端 | 在文件夹中打开 | 执行自定义命令 | 新标签页 | 状态 |
+This project is a new app, written from scratch in Swift, that does the same job on current macOS. It keeps the name and the way of working, and it picks up your old Go2Shell settings the first time it runs.
+
+> **Status: in development.** The core works, but there is no packaged release yet, so you build it from source. See [Supported terminals](#supported-terminals) and [Known limitations](#known-limitations) for what has and has not been tested.
+
+## Features
+
+- **One click from Finder.** Opens your terminal in the folder shown in the front Finder window, then quits. No Dock icon, nothing left running.
+- **Custom command.** Choose what runs in the new session. The default is `cd %PATH%; clear; pwd`.
+- **Safe with any folder name.** `%PATH%` is replaced by a shell-quoted path, so spaces, quotes, `$`, backticks and non-ASCII names work without extra quoting.
+- **New window or new tab.**
+- **Selected folder first** (optional). With exactly one folder selected in Finder, open that folder instead of the window's folder.
+- **Migrates from the original Go2Shell.** Terminal, command and window mode are imported once on first run.
+- **Clear errors.** Missing Automation permission, virtual locations such as Recents or AirDrop, and deleted folders each get an alert that says what to do.
+- **English and Simplified Chinese**, following the system language.
+
+## Supported terminals
+
+| Terminal | Opens in folder | Runs custom command | New tab | Tested |
 | --- | --- | --- | --- | --- |
-| Terminal.app | ✅ | ✅ | 实验性 | 冷启动和热启动已实测 |
-| iTerm2 | ✅ | ✅ | ✅ | 热启动已实测，冷启动待测 |
-| Ghostty、WezTerm、kitty、Alacritty、Warp | ✅ | 不支持 | 不支持 | 代码已实现，尚未逐个实测 |
+| Terminal.app | Yes | Yes | Experimental | Cold and warm start |
+| iTerm2 | Yes | Yes | Yes | Warm start; cold start pending |
+| Ghostty, WezTerm, kitty, Alacritty, Warp | Yes | No | No | Implemented, not yet verified one by one |
 
-- 设置里选的终端没有安装时，会改用 Terminal.app。
-- Terminal.app 的新标签页是通过模拟 ⌘T 实现的，需要辅助功能权限；没有权限时改为打开新窗口。
+- If the terminal you chose is not installed, Go2Shell uses Terminal.app.
+- Terminal.app has no scripting command for a new tab, so Go2Shell simulates ⌘T. This needs Accessibility permission; without it, Go2Shell opens a new window.
 
-## 环境要求
+## Requirements
 
-- macOS 14 或更高版本
-- Xcode 或 Xcode 命令行工具（提供 Swift 6 工具链）
+- macOS 14 or later
+- Xcode or the Xcode Command Line Tools (Swift 6 toolchain), to build from source
 
-## 安装
+## Install
 
-目前没有发布安装包，需要从源码构建：
+There is no packaged release yet. Build and install from source:
 
 ```sh
 git clone https://github.com/bingghost/go2shell.git
@@ -44,81 +67,142 @@ cd go2shell
 ./install.sh
 ```
 
-`install.sh` 会构建 release 版本、安装到 `/Applications/Go2Shell.app`、打开设置窗口，然后清理编译产物。
+`install.sh` builds a release bundle, copies it to `/Applications/Go2Shell.app`, opens the settings window and removes the build products.
 
-> **注意：** 如果「应用程序」里还装着旧版 Go2Shell 2.5，它也叫 `Go2Shell.app`，安装时会被替换。旧版 App 不会被删除，而是移到 `~/Library/Application Support/Go2Shell/Replaced Apps/`；旧版的设置不受影响，第一次运行时仍会迁移过来。
+> **If the original Go2Shell 2.5 is installed:** it uses the same path, `/Applications/Go2Shell.app`. The installer does not delete it. It moves it to `~/Library/Application Support/Go2Shell/Replaced Apps/`, and its settings are still imported on first run.
 
-构建时默认用钥匙串里第一个 "Apple Development" 证书签名。没有证书时改用 ad-hoc 签名，这种情况下**每次重新构建后都要重新授予自动化权限**。
+The build signs with the first "Apple Development" certificate in your keychain. Without one it falls back to ad-hoc signing, and macOS then asks for Automation permission again after every rebuild.
 
-## 第一次使用
+## Quick start
 
-1. 打开「应用程序」文件夹，按住 ⌘，把 Go2Shell 拖到任意 Finder 窗口的工具栏上。设置窗口里的「在 Finder 中显示 Go2Shell」按钮可以帮你找到它。
-2. 在 Finder 里打开一个文件夹，点击工具栏上的 Go2Shell。
-3. 第一次点击时 macOS 会询问是否允许 Go2Shell 控制 Finder 和终端，选择允许。
-4. 终端在该文件夹打开，Go2Shell 自动退出，不会在 Dock 里留下图标。
+1. Open the Applications folder, hold **⌘**, and drag Go2Shell onto the toolbar of any Finder window.
+2. Open a folder in Finder and click the Go2Shell button.
+3. The first time, macOS asks whether Go2Shell may control Finder and your terminal. Allow both.
+4. Your terminal opens in that folder and Go2Shell quits.
 
-之后要修改设置：按住 ⌥ 点击工具栏上的 Go2Shell，或者直接从「应用程序」里打开它。
+To change settings, hold **⌥** while clicking the toolbar button, or open Go2Shell from the Applications folder.
 
-每个设置的含义、命令模板的写法、权限和常见问题，见[使用文档](docs/USAGE.md)。
+## Settings
 
-## 设置
-
-| 设置项 | 说明 | 默认值 |
+| Setting | What it does | Default |
 | --- | --- | --- |
-| 使用的终端 | 点击工具栏按钮时打开哪个终端 | Terminal.app |
-| 命令 | 打开终端后执行的命令，`%PATH%` 代表文件夹路径；设置窗口里有实时预览 | `cd %PATH%; clear; pwd` |
-| 打开方式 | 新窗口或新标签页 | 新窗口 |
-| 只选中一个文件夹时，在该文件夹中打开 | 见上文「选中文件夹优先」 | 关闭 |
+| Open folders in | The terminal to open | Terminal.app |
+| Command | Runs in the new session; `%PATH%` stands for the folder. The window shows a live preview. | `cd %PATH%; clear; pwd` |
+| Open in | New window or new tab | New window |
+| When one folder is selected, open that folder | See "Selected folder first" above | Off |
 
-命令里不需要给 `%PATH%` 加引号。命令留空时相当于 `cd %PATH%`；命令里没有 `%PATH%` 时，会自动在前面加上 `cd <路径>;`。
+Do not put quotes around `%PATH%`. An empty command behaves like `cd %PATH%`, and a command without `%PATH%` gets `cd <folder>;` put in front of it.
 
-## 卸载
+| Template | Runs, for the folder `/Users/you/My Project` |
+| --- | --- |
+| `cd %PATH%; clear; pwd` | `cd '/Users/you/My Project'; clear; pwd` |
+| `cd %PATH% && ls -la` | `cd '/Users/you/My Project' && ls -la` |
+| `clear` | `cd '/Users/you/My Project'; clear` |
 
-```sh
-make uninstall                          # 删除 /Applications/Go2Shell.app
-defaults delete com.bingghost.Go2Shell   # 删除设置
+## How it works
+
+```mermaid
+flowchart LR
+    A[Click in Finder toolbar] --> B{⌥ held, or<br>Finder not frontmost?}
+    B -- yes --> S[Settings window]
+    B -- no --> C[Ask Finder for the<br>front window's folder]
+    C --> D[Render the command<br>with a quoted path]
+    D --> E[Tell the terminal to<br>open a window or tab]
+    E --> F[Quit]
 ```
 
-工具栏上的图标需要手动移除：按住 ⌘ 把它拖出工具栏。
+Two design rules keep folder names from being interpreted as code:
 
-## 已知限制
+- **AppleScript source is constant.** Paths and commands are passed to script handlers as Apple Event parameters and are never spliced into script text.
+- **Paths are always shell-quoted.** The only text that reaches a shell is the rendered command template, with the path wrapped in POSIX single quotes.
 
-- 没有发布安装包，没有做公证，也没有自动更新。
-- 第三方终端（Ghostty、WezTerm、kitty、Alacritty、Warp）只能在文件夹中打开，不能执行自定义命令，也不支持新标签页。
-- 以下项目尚未完成手工测试：iTerm2 冷启动、从工具栏点击、按住 ⌥ 打开设置、拒绝授权后的提示。
-- 需要自己把图标拖到工具栏，暂时没有一键安装到工具栏的功能。
-- 只在 Apple Silicon 上测试过；可以构建 Universal 版本（`make build UNIVERSAL=1`），但没有在 Intel 机器上测试。
+Terminals without a scripting interface (Ghostty, WezTerm, kitty, Alacritty, Warp) are launched through `NSWorkspace`, with no shell involved.
 
-## 开发
+## Troubleshooting
 
-```sh
-make build        # 构建并签名 .build/Go2Shell.app
-make test         # 运行单元测试
-./start.sh        # 构建 debug 版本并在前台运行，不带参数时打开设置窗口
-./clean.sh        # 删除编译产物
-make help         # 查看全部 make 目标
-```
+| Symptom | What to do |
+| --- | --- |
+| "Go2Shell is not allowed to control …" | Turn the switch on in System Settings › Privacy & Security › Automation. If Go2Shell is not listed, run `tccutil reset AppleEvents com.bingghost.Go2Shell` and click the button again. |
+| Permission is requested after every rebuild | The build was signed ad-hoc. Build with a certificate: `make build SIGN_ID=<identity>`. |
+| The settings window opens instead of a terminal | ⌥ was held, or Go2Shell was not started from Finder. |
+| Terminal.app opens instead of your terminal | The chosen terminal is not installed. |
+| The custom command does not run | Only Terminal.app and iTerm2 can run a command. |
 
-不经过 Finder 工具栏的调试参数：
+To watch what Go2Shell does:
 
 ```sh
-./start.sh --print-finder-path    # 打印 Finder 最前窗口的路径
-./start.sh --open ~/Downloads     # 按当前设置在指定文件夹打开终端
-./start.sh --settings             # 打开设置窗口
+log stream --level debug --predicate 'subsystem == "com.bingghost.Go2Shell"'
 ```
 
-从终端直接运行时，自动化权限算在运行它的那个终端名下，而不是 Go2Shell。权限出问题时可以用 `make reset-tcc` 重置。
+## Uninstall
 
-应用图标由 `Scripts/make-icon.swift` 绘制，修改后用 `make icon` 重新生成。
+```sh
+make uninstall                            # removes /Applications/Go2Shell.app
+defaults delete com.bingghost.Go2Shell    # removes the settings
+```
 
-文档在 [`docs/`](docs/)：
+Hold **⌘** and drag the button off the Finder toolbar to remove it.
 
-- [使用文档](docs/USAGE.md)
-- [产品需求](docs/01-PRD.md)
-- [技术设计](docs/02-TECH-DESIGN.md)
-- [需求清单](docs/03-REQUIREMENTS.md)
-- [开发计划与进度](docs/04-DEV-PLAN.md)
+## Known limitations
 
-## 许可
+- No packaged release, no notarization, no automatic updates.
+- Third-party terminals only open in the folder. They cannot run the custom command or open a new tab.
+- Not yet tested by hand: iTerm2 cold start, clicking from the toolbar, ⌥-click, the alert after denying permission, and the Terminal.app new-tab path.
+- You add the button to the toolbar yourself; there is no one-click toolbar installer.
+- Tested on Apple Silicon only. A universal build is available with `make build UNIVERSAL=1` but has not been tested on an Intel Mac.
 
-尚未选定许可证。
+## Development
+
+The project is a Swift package with a Makefile that assembles and signs the `.app`. There is no Xcode project.
+
+```sh
+make build        # build and sign .build/Go2Shell.app
+make test         # run the unit tests
+./start.sh        # build a debug bundle and run it in the foreground
+./clean.sh        # remove build products
+make help         # list all make targets
+```
+
+Flags for running without the Finder toolbar:
+
+```sh
+./start.sh --print-finder-path    # print the folder of the front Finder window
+./start.sh --open ~/Downloads     # open the configured terminal in a folder
+./start.sh --settings             # open the settings window
+```
+
+Run from a shell, Automation permission belongs to the terminal you ran it from, not to Go2Shell. `make reset-tcc` resets the permission for Go2Shell.
+
+| Path | Contents |
+| --- | --- |
+| `Sources/Go2ShellCore` | Pure logic with unit tests: shell quoting, command template, terminal capabilities, settings, launch routing. Does not import AppKit. |
+| `Sources/Go2Shell` | The app: Finder lookup, terminal launchers, settings window, error alerts. |
+| `Tests/Go2ShellCoreTests` | Unit tests (Swift Testing). |
+| `Scripts/make-icon.swift` | Draws the app icon; run it with `make icon`. |
+
+Design documents are in [`docs/`](docs/) and are written in Chinese:
+
+- [User guide](docs/USAGE.md)
+- [Product requirements](docs/01-PRD.md)
+- [Technical design](docs/02-TECH-DESIGN.md)
+- [Requirements list](docs/03-REQUIREMENTS.md)
+- [Development plan and progress](docs/04-DEV-PLAN.md)
+
+## Contributing
+
+Issues and pull requests are welcome. Before opening a pull request, run `make test` and `make build`. Reports about a specific terminal are especially useful: include the terminal's version, your macOS version, and the output of the `log stream` command above.
+
+## How this project was built
+
+The code was written with Claude Opus 5.5 and then reviewed and refined with Claude Fable 5.2, both through Claude Code, under the author's direction. The requirements, design and milestone plan that guided the work are kept in [`docs/`](docs/).
+
+## Acknowledgements
+
+- **Go2Shell by ZipZapMac**, the original app this project replaces. Its behaviour and settings were the reference for what this app should do. This project is not affiliated with ZipZapMac and contains none of its code.
+- **[solarhell/go2shell](https://github.com/solarhell/go2shell)**, an open-source alternative that was consulted for ideas. No code was copied from it.
+
+## License
+
+Released under the [MIT License](LICENSE).
+
+The license covers the code in this repository. The name "Go2Shell" comes from the original app by ZipZapMac, and this project is not affiliated with it.

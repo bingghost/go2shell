@@ -82,6 +82,7 @@ LSP 看不到下面这些靠字符串关联的东西，必须另外用 grep 查�
 ## 工作约定
 
 - `reference-solarhell/` 是参考仓库（已 gitignore），**不要复制其中的代码**。
+- README 有两份：`README.md`（英文，GitHub 默认显示）和 `README.zh-CN.md`（中文），章节一一对应，改一份时另一份要同步改。
 - 设计与实测不一致时以实测为准，并同步更新 `docs/02-TECH-DESIGN.md`。
 - 完成一个里程碑：`make test` 和 `make build` 都要通过，更新 `docs/04-DEV-PLAN.md` 进度表，commit message 以 `M<n>:` 开头。
 - 需要用户动手的测试（点击授权、拖到工具栏、按 ⌥、界面截图确认等）不要中途停下来等：先把代码写完，把这些项记到 M8 的 `docs/TEST-CHECKLIST.md`，并在进度表备注里写明推迟了什么（2026-11-22 用户指示，见 `docs/04-DEV-PLAN.md`）。
