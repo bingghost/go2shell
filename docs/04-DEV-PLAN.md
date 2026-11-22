@@ -1,4 +1,4 @@
-# Go2Term 开发计划
+# Go2Shell 开发计划
 
 > 依据：`docs/01-PRD.md`、`docs/02-TECH-DESIGN.md`、`docs/03-REQUIREMENTS.md`
 > 执行方式：每个里程碑对应 `docs/05-GOALS.md` 里的一条 `/goal` 命令，按顺序执行。
@@ -26,23 +26,23 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 **任务**
 1. `git init`；写 `.gitignore`。
 2. 写 `Package.swift`：三个 target、Swift 6 语言模式、`.macOS(.v14)`。
-3. 写占位代码：`Go2TermCore` 里放一个 `Version.swift`；`Go2Term/main.swift` 先只做一件事：弹一个空的 NSWindow，标题是 "Go2Term"。
-4. 准备 `Resources/Info.plist`（字段见技术 §4）、`Go2Term.entitlements`、`en.lproj` 和 `zh-Hans.lproj` 两份空的 `Localizable.strings`。
+3. 写占位代码：`Go2ShellCore` 里放一个 `Version.swift`；`Go2Shell/main.swift` 先只做一件事：弹一个空的 NSWindow，标题是 "Go2Shell"。
+4. 准备 `Resources/Info.plist`（字段见技术 §4）、`Go2Shell.entitlements`、`en.lproj` 和 `zh-Hans.lproj` 两份空的 `Localizable.strings`。
 5. 写 Makefile，包含 `build`、`test`、`run`、`install`、`uninstall`、`reset-tcc`、`clean`；签名逻辑按技术 §4。
 
 **完成标准**
 - `make build` 和 `make test` 都通过
-- `codesign -dv --verbose=4 .build/Go2Term.app` 输出中有 `Authority=Apple Development` 和 `flags=...runtime`
-- `open .build/Go2Term.app` 能看到窗口
+- `codesign -dv --verbose=4 .build/Go2Shell.app` 输出中有 `Authority=Apple Development` 和 `flags=...runtime`
+- `open .build/Go2Shell.app` 能看到窗口
 - 已经 commit
 
 ### M1 核心逻辑
-**任务**：按技术 §3.1，实现 ShellQuote、CommandTemplate、TerminalKind、Settings / SettingsStore / UserDefaultsSettingsStore、LegacyMigration、LaunchRouter、Go2TermError 和错误码映射，并按技术 §9.1 写单元测试。
+**任务**：按技术 §3.1，实现 ShellQuote、CommandTemplate、TerminalKind、Settings / SettingsStore / UserDefaultsSettingsStore、LegacyMigration、LaunchRouter、Go2ShellError 和错误码映射，并按技术 §9.1 写单元测试。
 
 **完成标准**
 - `swift test` 全部通过，技术 §9.1 的每个用例都有对应测试
 - ShellQuote 的往返测试是真的调用了 `/bin/sh`
-- `Go2TermCore` 不 import AppKit
+- `Go2ShellCore` 不 import AppKit
 
 ### M2 Finder 路径获取
 **任务**
@@ -51,7 +51,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 3. 实现 `--print-finder-path` 参数：输出路径或错误信息，然后退出，退出码非 0 表示出错。
 
 **完成标准**
-- `.build/Go2Term.app/Contents/MacOS/Go2Term --print-finder-path` 在以下三种情况下输出都正确：
+- `.build/Go2Shell.app/Contents/MacOS/Go2Shell --print-finder-path` 在以下三种情况下输出都正确：
   - 打开一个普通目录窗口
   - 关掉所有 Finder 窗口
   - 窗口停在「最近使用」
@@ -65,10 +65,10 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 3. 用脚本生成技术 §9.2 列出的特殊字符测试目录。
 
 **完成标准**
-- 对每个特殊目录执行 `Go2Term --open <dir>`，iTerm2 都打开新窗口，`pwd` 输出正确
+- 对每个特殊目录执行 `Go2Shell --open <dir>`，iTerm2 都打开新窗口，`pwd` 输出正确
   - 验证方法：用 `osascript` 读取 iTerm 当前 session 的 `contents` 或 `path`，或者人工确认
 - iTerm2 冷启动时只出现一个窗口
-- 临时把设置改成 Terminal.app（`defaults write com.bingghost.Go2Term terminal appleTerminal`），用同样的方法验证
+- 临时把设置改成 Terminal.app（`defaults write com.bingghost.Go2Shell terminal appleTerminal`），用同样的方法验证
 - 已经 commit
 
 ### M4 启动编排
@@ -96,7 +96,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 - 完成中英文本地化
 
 **完成标准**
-- 第一次启动后，`defaults read com.bingghost.Go2Term` 显示的是从旧配置迁移过来的 iTerm2 和对应命令
+- 第一次启动后，`defaults read com.bingghost.Go2Shell` 显示的是从旧配置迁移过来的 iTerm2 和对应命令
 - REQ-UI-01～06 的验收都通过
 - grep 检查 Sources 里没有写死的中文界面文字
 
@@ -111,7 +111,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 
 ### M7 图标与工具栏
 **任务**
-- `Scripts/make-icon.swift`：原创图标。思路是一个圆角方块，里面画终端提示符 `>_` 和一个箭头。**不要模仿 Go2Shell 原来的图标**。
+- `Scripts/make-icon.swift`：原创图标。思路是一个圆角方块，里面画终端提示符 `>_` 和一个箭头。**不要模仿旧 Go2Shell 的图标**。
 - 写 `make icon`。
 - 一键装到工具栏：先实测 Finder plist 的结构。可行就实现，并且要备份、弹窗确认、提供卸载；不可行就把结论写进 `docs/02-TECH-DESIGN.md` §3.8，然后放弃这项。
 
@@ -150,6 +150,6 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 | M3 | ✅ | 2026-11-22 | iTerm2 热启动 10/10、Terminal.app 冷启动和热启动 10/10 通过；**iTerm2 冷启动推迟到 M8 测**（会话就跑在 iTerm 里，没法自己退出 iTerm 来测；用 Scripts/check-iterm-cold.sh 测） |
 | M4 | ✅ | 2026-11-22 | AppController、ErrorPresenter、os.Logger 日志；--open 自测从启动到出现窗口 309ms。**工具栏点击、⌥、reopen、拒绝授权这 4 项手工测试按用户要求移到 M8 测试清单** |
 | M5 | ✅ | 2026-11-22 | SwiftUI 设置窗口；迁移实测通过（iTerm2、命令、didMigrate=1，只迁移一次）；en / zh-Hans 窗口标题验证通过；源码里没有写死的中文。**`Use Window` 语义和界面截图确认移到 M8 测试清单** |
-| M6 | ⬜ | | |
-| M7 | ⬜ | | |
+| M6 | ⬜ | | 2026-11-22 code review 后改了 Terminal.app 新标签页脚本（确认标签页数量增加后才发命令，失败退回新窗口）和 GenericLauncher 的超时处理，脚本只做了编译检查。**待 M8 手工测**：新标签页正常路径、最前面是 Terminal 设置窗口、拒绝 System Events 授权、第三方终端首次启动的确认框 |
+| M7 | ⬜ | | 图标部分已提前完成（2026-11-22）：`Scripts/make-icon.swift`、`make icon`、`Resources/AppIcon.icns`、`docs/images/icon-preview.png`。**未做**：深色和浅色工具栏下的实际效果确认、一键装到工具栏（REQ-UI-08） |
 | M8 | ⬜ | | |

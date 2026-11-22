@@ -1,12 +1,14 @@
-# Go2Term 产品需求文档（PRD）
+# Go2Shell 产品需求文档（PRD）
 
 > 版本：v1.0 草案 · 日期：2026-11-21 · 负责人：bingghost
 > 状态：待评审。文中标注「可改」的地方是默认决定，可以随时调整。
 
+> 命名：本项目叫 Go2Shell（Bundle ID `com.bingghost.Go2Shell`）。文中的「旧 Go2Shell」指 ZipZapMac 的 Go2Shell 2.5（`com.zipzapmac.Go2Shell`），两者同名但不是同一个 App。
+
 ## 1. 背景
 
 - 我现在用的是 Go2Shell 2.5（`com.zipzapmac.Go2Shell`），它是一个**纯 x86_64** 的 App，在 Apple Silicon 上只能靠 Rosetta 2 运行。Apple 已经在逐步收缩 Rosetta，再升级几次系统，它很可能就打不开了。
-- Go2Shell 的作者已经多年没有更新过它。
+- 旧 Go2Shell 的作者已经多年没有更新过它。
 - 开源替代品（比如 solarhell/go2shell）可以参考，但存在以下问题：
   - 不支持自定义命令
   - 路径转义有隐患
@@ -23,14 +25,14 @@
 
 | 角色 | 说明 |
 | --- | --- |
-| 主要用户 | 我自己：开发者，主力终端是 iTerm2，习惯 Go2Shell 的使用方式 |
+| 主要用户 | 我自己：开发者，主力终端是 iTerm2，习惯旧 Go2Shell 的使用方式 |
 | 次要用户 | 其他开发者，用 Terminal.app、Ghostty、WezTerm、Kitty、Alacritty 或 Warp |
 
 主要场景：
 
-1. **S1 一键打开**：在 Finder 里浏览到某个项目目录，点工具栏上的 Go2Term，iTerm2 立刻开一个新窗口，`cd` 到这个目录，并执行 `clear; pwd`。
+1. **S1 一键打开**：在 Finder 里浏览到某个项目目录，点工具栏上的 Go2Shell，iTerm2 立刻开一个新窗口，`cd` 到这个目录，并执行 `clear; pwd`。
 2. **S2 首次设置**：第一次启动时，自动沿用旧 Go2Shell 的配置（终端、命令、窗口模式），然后引导我把 App 拖到 Finder 工具栏上。
-3. **S3 修改设置**：按住 ⌥ 点工具栏按钮，或者直接从「应用程序」里打开 Go2Term，会显示设置窗口。
+3. **S3 修改设置**：按住 ⌥ 点工具栏按钮，或者直接从「应用程序」里打开 Go2Shell，会显示设置窗口。
 4. **S4 异常提示**：Finder 没有可用的窗口、目录不是真实路径、自动化权限被拒、终端没装时，给出清楚的提示和解决办法，不会没有任何反应。
 
 ## 4. 功能范围
@@ -72,7 +74,7 @@
 用户点击工具栏图标
         │
         ▼
- Go2Term 启动 ──按住 ⌥ / 带 --settings / 最前台不是 Finder──▶ 显示设置窗口
+ Go2Shell 启动 ──按住 ⌥ / 带 --settings / 最前台不是 Finder──▶ 显示设置窗口
         │（Finder 在最前台）
         ▼
  向 Finder 查询最前窗口的目录
@@ -100,7 +102,7 @@
 
 ## 7. 成功标准
 
-1. 删掉旧 Go2Shell 以后，Go2Term 可以完全替代它日常使用，覆盖 S1–S4。
+1. 删掉旧 Go2Shell 以后，新的 Go2Shell 可以完全替代它日常使用，覆盖 S1–S4。
 2. 测试清单（见技术文档 §9）全部通过。
 3. 从干净的 checkout 开始，`make install` 一条命令就能装好。
 
@@ -108,7 +110,7 @@
 
 | 事项 | 默认 | 可改 |
 | --- | --- | --- |
-| App 名称 / Bundle ID | Go2Term / `com.bingghost.Go2Term` | ✅ |
+| App 名称 / Bundle ID | Go2Shell / `com.bingghost.Go2Shell` | ✅ |
 | 架构 | arm64；`make UNIVERSAL=1` 出 Universal | ✅ |
 | 签名 | 钥匙串里的 `Apple Development` 证书 | ✅ |
-| GitHub 仓库 | `git@github-personal:bingghost/go2term.git`（需要先在 GitHub 上建好） | ✅ |
+| GitHub 仓库 | `git@github-personal:bingghost/go2shell.git`（需要先在 GitHub 上建好） | ✅ |

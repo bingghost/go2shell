@@ -10,13 +10,13 @@
         <string>zh-Hans</string>
     </array>
     <key>CFBundleExecutable</key>
-    <string>Go2Term</string>
+    <string>Go2Shell</string>
     <key>CFBundleIdentifier</key>
-    <string>com.bingghost.Go2Term</string>
+    <string>com.bingghost.Go2Shell</string>
     <key>CFBundleName</key>
-    <string>Go2Term</string>
+    <string>Go2Shell</string>
     <key>CFBundleDisplayName</key>
-    <string>Go2Term</string>
+    <string>Go2Shell</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleInfoDictionaryVersion</key>
@@ -34,7 +34,7 @@
     <key>LSUIElement</key>
     <true/>
     <key>NSAppleEventsUsageDescription</key>
-    <string>Go2Term reads the current Finder folder and asks your terminal to open a window there. Go2Term 需要读取 Finder 当前目录，并控制终端在该目录打开新窗口。</string>
+    <string>Go2Shell reads the current Finder folder and asks your terminal to open a window there. Go2Shell 需要读取 Finder 当前目录，并控制终端在该目录打开新窗口。</string>
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSPrincipalClass</key>

@@ -1,4 +1,4 @@
-# Go2Term 技术设计文档
+# Go2Shell 技术设计文档
 
 > 版本：v1.0 草案 · 日期：2026-11-21 · 对应 PRD：`docs/01-PRD.md`
 
@@ -11,8 +11,8 @@
 | 构建 | **Swift Package Manager + Makefile 组装 .app** | 纯文本配置，不需要维护 `.pbxproj`；命令行和 AI 都好操作；`swift test` 可以直接跑测试 |
 | 进程间通信 | 固定的 AppleScript 源码，**通过 handler 传参调用**（`NSAppleEventDescriptor`） | 路径和命令不会被拼进脚本源码，从根本上避免 AppleScript 注入 |
 | 启动无脚本接口的终端 | `NSWorkspace.openApplication` / `open(_:withApplicationAt:configuration:)` | 不经过 shell，没有注入风险 |
-| 日志 | `os.Logger`（subsystem `com.bingghost.Go2Term`） | 用 `log stream --predicate 'subsystem == "com.bingghost.Go2Term"'` 查看 |
-| 测试 | XCTest 或 Swift Testing，只测 `Go2TermCore` | 纯逻辑，可以快速跑完 |
+| 日志 | `os.Logger`（subsystem `com.bingghost.Go2Shell`） | 用 `log stream --predicate 'subsystem == "com.bingghost.Go2Shell"'` 查看 |
+| 测试 | XCTest 或 Swift Testing，只测 `Go2ShellCore` | 纯逻辑，可以快速跑完 |
 | 最低系统 | macOS 14 | |
 | 沙盒 | **不开** | 要用 Apple Events 控制多个 App，开沙盒得为每个目标声明 scripting-targets，对个人工具来说没必要 |
 | Hardened Runtime | 开，带 `com.apple.security.automation.apple-events` 权限 | 签名后才能正常申请自动化权限 |
@@ -24,16 +24,16 @@ go2shell/                         # git 根目录
 ├── Package.swift
 ├── Makefile
 ├── Sources/
-│   ├── Go2TermCore/              # 纯逻辑，不依赖 AppKit，可以单元测试
+│   ├── Go2ShellCore/              # 纯逻辑，不依赖 AppKit，可以单元测试
 │   │   ├── ShellQuote.swift
 │   │   ├── CommandTemplate.swift
 │   │   ├── TerminalKind.swift
 │   │   ├── Settings.swift
 │   │   ├── LegacyMigration.swift
 │   │   ├── LaunchRouter.swift
-│   │   ├── Go2TermError.swift
+│   │   ├── Go2ShellError.swift
 │   │   └── AppleScriptRunner.swift   # 只依赖 Foundation，放在 Core 里方便单元测试（M2 实测后调整）
-│   └── Go2Term/                  # App：入口、系统交互、UI
+│   └── Go2Shell/                  # App：入口、系统交互、UI
 │       ├── main.swift
 │       ├── AppController.swift
 │       ├── FinderLocator.swift
@@ -47,10 +47,10 @@ go2shell/                         # git 根目录
 │       └── Settings/
 │           ├── SettingsWindowController.swift
 │           └── SettingsView.swift
-├── Tests/Go2TermCoreTests/
+├── Tests/Go2ShellCoreTests/
 ├── Resources/
 │   ├── Info.plist
-│   ├── Go2Term.entitlements
+│   ├── Go2Shell.entitlements
 │   ├── AppIcon.icns
 │   ├── en.lproj/Localizable.strings
 │   └── zh-Hans.lproj/Localizable.strings
@@ -64,7 +64,7 @@ go2shell/                         # git 根目录
 
 ## 3. 模块设计
 
-### 3.1 Go2TermCore（纯逻辑）
+### 3.1 Go2ShellCore（纯逻辑）
 
 #### ShellQuote
 ```swift
@@ -147,7 +147,7 @@ public static func route(_ ctx: LaunchContext) -> LaunchAction
 
 ### 3.2 AppleScriptRunner
 
-> 位置：`Go2TermCore`（M2 调整）。它只用到 Foundation 的 `NSAppleScript` / `NSAppleEventDescriptor`，四字符码自己定义，不需要 import Carbon；标注了 `@MainActor`。单元测试里有 echo 往返测试，包括模拟注入的字符串。
+> 位置：`Go2ShellCore`（M2 调整）。它只用到 Foundation 的 `NSAppleScript` / `NSAppleEventDescriptor`，四字符码自己定义，不需要 import Carbon；标注了 `@MainActor`。单元测试里有 echo 往返测试，包括模拟注入的字符串。
 
 把固定的脚本源码编译一次，再用 Apple Event 调用其中的 handler，参数作为 descriptor 传进去：
 
@@ -158,7 +158,7 @@ final class AppleScriptRunner {
 }
 ```
 - 实现方式：构造 `kASAppleScriptSuite` / `kASSubroutineEvent`，用 `keyASSubroutineName` 传小写的 handler 名，参数放进 `NSAppleEventDescriptor.list()`，最后调用 `NSAppleScript.executeAppleEvent(_:error:)`。
-- 把 errorDict 里的 `NSAppleScriptErrorNumber` 映射成 `Go2TermError`：
+- 把 errorDict 里的 `NSAppleScriptErrorNumber` 映射成 `Go2ShellError`：
   - `-1743`：未授权（automationDenied）
   - `-600` / `-609`：目标 App 没有运行或连接失败
   - 其他：`scriptFailed(code, message)`
@@ -224,16 +224,17 @@ end openTab
 ```
 - 用 `NSRunningApplication.runningApplications(withBundleIdentifier:)` 判断 `wasRunning`，在调用脚本之前判断。
 - **M3 实现**：冷启动时 iTerm 的默认窗口不一定马上出现，所以脚本里的 `waitForWindow()` 最多轮询 2 秒（20 次 × 0.1 秒）。等到窗口就复用它；等不到（比如 iTerm 设置成启动时不开窗口）就新建一个。Terminal.app 冷启动时先 `launch`，同样轮询，再用 `do script ... in front window`。实测 Terminal 冷启动约 2.7 秒，主要是 Terminal 自己的启动时间。
-- **自动化授权**：从 shell 直接运行 `.build/.../Go2Term` 时，授权算在父进程（当前终端）名下；只有从 Finder 或 Dock 启动时，授权才属于 Go2Term 自己。
+- **自动化授权**：从 shell 直接运行 `.build/.../Go2Shell` 时，授权算在父进程（当前终端）名下；只有从 Finder 或 Dock 启动时，授权才属于 Go2Shell 自己。
 
 **AppleTerminalLauncher**（`tell application id "com.apple.Terminal"`）：
 - 新窗口：如果已经在运行，用 `do script cmd` 开新窗口；如果没运行，冷启动时 Terminal 会自动开一个窗口，就用 `do script cmd in front window` 复用它，避免出现两个窗口。
-- 新标签（P1，实验性）：通过 `System Events` 发送 `keystroke "t" using command down`，再 `do script cmd in front window`。这需要辅助功能权限，没有权限就退回新窗口模式并提示。
+- 新标签（P1，实验性）：通过 `System Events` 发送 `keystroke "t" using command down`，按键前记下目标窗口的 id 和标签页数量，按键后轮询（最多约 1.5 秒），**只有标签页数量确实增加了**才 `do script cmd in window id <目标窗口>`；否则返回 `noTab`，由 Swift 侧退回新窗口。这样命令不会被送进用户正在用的标签页。System Events 里按 bundle id 找进程，不按进程名。以下情况都退回新窗口：没有辅助功能权限（提示一次）、System Events 的自动化授权被拒、新标签页没有出现。
 
 **GenericLauncher**：
 - 用 `NSWorkspace.shared.urlForApplication(withBundleIdentifier:)` 找到 App。
 - 只需要打开目录的终端：调用 `NSWorkspace.shared.open([dirURL], withApplicationAt:, configuration:)`。
 - 需要传参数的终端：用 `NSWorkspace.OpenConfiguration.arguments` 传。`createsNewApplicationInstance` 是否需要打开，按各终端实测决定。
+- 最多等 5 秒让 Launch Services 回调（否则 App 可能在请求发出前就退出）。超时不算失败，只记日志：请求已经交给系统，用户处理完首次启动的确认框后终端仍会打开。
 
 **选择终端的兜底**：配置的终端如果没有安装，就退回 Terminal.app，并记一条日志。
 
@@ -256,7 +257,7 @@ main.swift:
 
 | 错误 | 提示 | 按钮 |
 | --- | --- | --- |
-| automationDenied(target) | 「Go2Term 没有控制 {target} 的权限」 | 「打开系统设置」，跳转到 `x-apple.systempreferences:com.apple.preference.security?Privacy_Automation`；「好」 |
+| automationDenied(target) | 「Go2Shell 没有控制 {target} 的权限」 | 「打开系统设置」，跳转到 `x-apple.systempreferences:com.apple.preference.security?Privacy_Automation`；「好」 |
 | notFileSystem | 「当前 Finder 窗口不是一个文件夹」 | 「好」 |
 | terminalNotFound | 「找不到 {name}，已改用 Terminal.app」 | 不弹窗，只记日志 |
 | scriptFailed | 显示错误码和信息 | 「好」 |
@@ -269,7 +270,7 @@ main.swift:
 - **打开方式**：新窗口或新标签；终端不支持新标签时禁用这个选项。
 
 另外还有：
-- **安装到工具栏**：图文说明加「在 Finder 中显示 Go2Term」按钮；P1 增加「自动安装到工具栏」。
+- **安装到工具栏**：图文说明加「在 Finder 中显示 Go2Shell」按钮；P1 增加「自动安装到工具栏」。
 - **底部**：版本号、「测试一下」按钮（用 `--open ~` 的同一套逻辑打开一次终端）。
 - 设置存进 `UserDefaults`，修改后立即生效。
 
@@ -278,7 +279,7 @@ main.swift:
 - Finder 的工具栏配置存在 `~/Library/Preferences/com.apple.finder.plist` 的 `NSToolbar Configuration Browser` 下（包括 `TB Item Identifiers`、`TB Item Plists` 等）。
 - **在实现之前必须先在本机实测**：导出 plist，手动拖一个 App 到工具栏，再导出一次，对比差异，以实测得到的结构为准。
 - 流程：
-  1. 把配置备份到 `~/Library/Application Support/Go2Term/finder-toolbar-backup-<时间戳>.plist`
+  1. 把配置备份到 `~/Library/Application Support/Go2Shell/finder-toolbar-backup-<时间戳>.plist`
   2. 写入新配置
   3. 执行 `killall cfprefsd Finder`，这一步要先弹窗征得用户确认
   4. 提供「从工具栏移除」
@@ -288,23 +289,33 @@ main.swift:
 
 | 目标 | 作用 |
 | --- | --- |
-| `make build` | `swift build -c release`（加 `UNIVERSAL=1` 时追加 `--arch arm64 --arch x86_64`），然后组装 `.build/Go2Term.app`，最后签名 |
+| `make build` | `swift build -c release`（加 `UNIVERSAL=1` 时追加 `--arch arm64 --arch x86_64`），然后组装 `.build/Go2Shell.app`，最后签名。`CONFIG=debug` 时构建 debug 包，输出到 `.build/dev/Go2Shell.app` |
 | `make test` | `swift test` |
 | `make run` | 构建后打开设置窗口 |
-| `make install` | 构建后复制到 `/Applications/Go2Term.app`（会覆盖已有的） |
-| `make uninstall` | 删除 `/Applications/Go2Term.app` |
+| `make install` | 构建后复制到 `/Applications/Go2Shell.app`（会覆盖已有的） |
+| `make deploy` | 只复制已经构建好的包到 `/Applications/Go2Shell.app`，不重新构建（`install.sh` 用） |
+| `make uninstall` | 删除 `/Applications/Go2Shell.app` |
 | `make icon` | 运行 `Scripts/make-icon.swift`，生成 `Resources/AppIcon.icns` |
-| `make reset-tcc` | `tccutil reset AppleEvents com.bingghost.Go2Term` |
-| `make clean` | 清理构建产物 |
+| `make reset-tcc` | `tccutil reset AppleEvents com.bingghost.Go2Shell` |
+| `make clean` | 删除 `.build` 里的编译产物（debug 和 release），保留 SwiftPM 拉取的三方依赖（`checkouts`、`repositories`、`artifacts`、`workspace-state.json`） |
+
+根目录的脚本是对 Makefile 的封装：
+
+| 脚本 | 作用 |
+| --- | --- |
+| `start.sh [参数]` | 开发调试：`make build CONFIG=debug`，结束上一个 debug 实例，然后在前台直接运行可执行文件，参数原样传给 App |
+| `build.sh` | `make build CONFIG=release` |
+| `install.sh` | `build.sh` → 结束正在运行的 Go2Shell → `make deploy` → 打开 `/Applications/Go2Shell.app` → `clean.sh` |
+| `clean.sh` | `make clean` |
 
 - **签名**：
-  - 用 `SIGN_ID ?= Apple Development` 自动选择钥匙串里的证书，命令是 `codesign --force --options runtime --timestamp=none --entitlements Resources/Go2Term.entitlements --sign "$(SIGN_ID)"`。
+  - 用 `SIGN_ID ?= Apple Development` 自动选择钥匙串里的证书，命令是 `codesign --force --options runtime --timestamp=none --entitlements Resources/Go2Shell.entitlements --sign "$(SIGN_ID)"`。
   - 找不到证书时退回 ad-hoc 签名（`-`），并打印警告：ad-hoc 签名每次重新编译后都要重新授权自动化权限。
 - **版本号**：从 git tag（`v*`）读取并写进 `CFBundleShortVersionString`；`CFBundleVersion` 用提交次数。
 
 ### Info.plist 关键字段
-- `CFBundleIdentifier`: `com.bingghost.Go2Term`
-- `CFBundleExecutable`: `Go2Term`
+- `CFBundleIdentifier`: `com.bingghost.Go2Shell`
+- `CFBundleExecutable`: `Go2Shell`
 - `LSMinimumSystemVersion`: `14.0`
 - `LSUIElement`: **true**。打开终端时完全不出现 Dock 图标，避免闪一下；进入设置模式时在代码里调用 `NSApp.setActivationPolicy(.regular)` 并激活 App，让设置窗口出现在 Dock 和 ⌘Tab 里。
 - `NSAppleEventsUsageDescription`：用中英文说明「用于读取 Finder 当前目录，并控制终端打开新窗口」
@@ -319,7 +330,7 @@ main.swift:
 ## 5. 错误类型
 
 ```swift
-public enum Go2TermError: Error, Equatable {
+public enum Go2ShellError: Error, Equatable {
     case automationDenied(target: String)
     case targetNotRunning(target: String)
     case notFileSystem
@@ -332,7 +343,7 @@ public enum Go2TermError: Error, Equatable {
 ## 6. 日志
 
 - 每次启动记录：分流结果、拿到的路径（日志级别为 `.private`，避免泄露）、用的终端、各阶段耗时。
-- 调试命令：`log stream --level debug --predicate 'subsystem == "com.bingghost.Go2Term"'`。
+- 调试命令：`log stream --level debug --predicate 'subsystem == "com.bingghost.Go2Shell"'`。
 
 ## 7. 安全要点
 
@@ -363,7 +374,7 @@ public enum Go2TermError: Error, Equatable {
 
 ### 9.2 集成和手工测试清单（`docs/TEST-CHECKLIST.md`，在 G8 里建立）
 
-**测试目录**：在 `~/tmp/go2term-test/` 下建这几个目录：
+**测试目录**：在 `~/tmp/go2shell-test/` 下建这几个目录：
 - `a b`
 - `it's`
 - `$HOME`

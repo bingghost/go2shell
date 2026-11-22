@@ -2,16 +2,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "Go2Term",
+    name: "Go2Shell",
     platforms: [.macOS(.v14)],
     products: [
-        .executable(name: "Go2Term", targets: ["Go2Term"]),
-        .library(name: "Go2TermCore", targets: ["Go2TermCore"]),
+        .executable(name: "Go2Shell", targets: ["Go2Shell"]),
+        .library(name: "Go2ShellCore", targets: ["Go2ShellCore"]),
     ],
     targets: [
-        .target(name: "Go2TermCore"),
-        .executableTarget(name: "Go2Term", dependencies: ["Go2TermCore"]),
-        .testTarget(name: "Go2TermCoreTests", dependencies: ["Go2TermCore"]),
+        .target(name: "Go2ShellCore"),
+        .executableTarget(name: "Go2Shell", dependencies: ["Go2ShellCore"]),
+        .testTarget(name: "Go2ShellCoreTests", dependencies: ["Go2ShellCore"]),
     ],
     swiftLanguageModes: [.v6]
 )

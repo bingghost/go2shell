@@ -1,12 +1,12 @@
-/* Go2Term — 简体中文 */
-"app.name" = "Go2Term";
-"settings.title" = "Go2Term 设置";
+/* Go2Shell — 简体中文 */
+"app.name" = "Go2Shell";
+"settings.title" = "Go2Shell 设置";
 
 "button.ok" = "好";
 "button.openSystemSettings" = "打开系统设置";
 
-"error.automationDenied.title" = "Go2Term 没有控制“%@”的权限";
-"error.automationDenied.body" = "请前往“系统设置 › 隐私与安全性 › 自动化”，允许 Go2Term 控制“%@”，然后再试一次。";
+"error.automationDenied.title" = "Go2Shell 没有控制“%@”的权限";
+"error.automationDenied.body" = "请前往“系统设置 › 隐私与安全性 › 自动化”，允许 Go2Shell 控制“%@”，然后再试一次。";
 "error.notFileSystem.title" = "当前 Finder 窗口不是文件夹";
 "error.notFileSystem.body" = "“最近使用”“隔空投送”等位置没有对应的文件夹，无法在其中打开终端。请打开一个普通文件夹后再试。";
 "error.pathNotFound.title" = "该文件夹已不存在";
@@ -30,7 +30,7 @@
 "settings.openMode.experimental" = "实验性：“终端”通过模拟 ⌘T 打开新标签页，需要辅助功能权限；没有权限时会改为打开新窗口。";
 "settings.preferSelectedFolder" = "只选中一个文件夹时，在该文件夹中打开";
 "settings.section.toolbar" = "Finder 工具栏";
-"settings.toolbar.instructions" = "在“应用程序”文件夹中按住 ⌘，把 Go2Term 拖到任意 Finder 窗口的工具栏上。点击它即可在当前文件夹打开终端；按住 ⌥ 点击则打开本设置。";
-"settings.toolbar.reveal" = "在 Finder 中显示 Go2Term";
+"settings.toolbar.instructions" = "在“应用程序”文件夹中按住 ⌘，把 Go2Shell 拖到任意 Finder 窗口的工具栏上。点击它即可在当前文件夹打开终端；按住 ⌥ 点击则打开本设置。";
+"settings.toolbar.reveal" = "在 Finder 中显示 Go2Shell";
 "settings.test" = "测试：在个人文件夹打开终端";
 "settings.version" = "版本 %@";
