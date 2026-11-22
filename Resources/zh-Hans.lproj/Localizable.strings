@@ -12,3 +12,25 @@
 "error.pathNotFound.title" = "该文件夹已不存在";
 "error.targetNotRunning.title" = "“%@”没有响应";
 "error.scriptFailed.title" = "无法打开终端";
+
+/* 设置 */
+"settings.section.terminal" = "终端";
+"settings.terminal" = "使用的终端";
+"settings.terminalMissing" = "未安装 %@，将改用“终端”。";
+"settings.section.command" = "命令";
+"settings.command" = "命令";
+"settings.command.reset" = "恢复默认";
+"settings.command.help" = "%PATH% 会被替换为文件夹路径，并且已经做好了 shell 引用，不需要自己再加引号。";
+"settings.command.preview" = "预览";
+"settings.command.unsupported" = "%@ 不支持执行自定义命令，只会在该文件夹打开。";
+"settings.section.openMode" = "打开方式";
+"settings.openMode" = "打开方式";
+"settings.openMode.newWindow" = "新窗口";
+"settings.openMode.newTab" = "新标签页";
+"settings.openMode.experimental" = "实验性：“终端”通过模拟 ⌘T 打开新标签页，需要辅助功能权限；没有权限时会改为打开新窗口。";
+"settings.preferSelectedFolder" = "只选中一个文件夹时，在该文件夹中打开";
+"settings.section.toolbar" = "Finder 工具栏";
+"settings.toolbar.instructions" = "在“应用程序”文件夹中按住 ⌘，把 Go2Term 拖到任意 Finder 窗口的工具栏上。点击它即可在当前文件夹打开终端；按住 ⌥ 点击则打开本设置。";
+"settings.toolbar.reveal" = "在 Finder 中显示 Go2Term";
+"settings.test" = "测试：在个人文件夹打开终端";
+"settings.version" = "版本 %@";

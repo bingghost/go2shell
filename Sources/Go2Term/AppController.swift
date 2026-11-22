@@ -21,6 +21,7 @@ final class AppController: NSObject, NSApplicationDelegate {
         case .printFinderPath: "printFinderPath"
         }
         Log.app.info("launch action: \(actionName, privacy: .public), startup \(elapsedMS(since: self.launchStart))ms")
+        LegacyImporter.runIfNeeded(store: store)
         switch initialAction {
         case .openTerminal(let explicitPath):
             openTerminal(explicitPath: explicitPath)
@@ -52,7 +53,9 @@ final class AppController: NSObject, NSApplicationDelegate {
     func showSettings() {
         NSApp.setActivationPolicy(.regular)
         if settingsController == nil {
-            settingsController = SettingsWindowController()
+            settingsController = SettingsWindowController { [weak self] in
+                self?.openTerminal(explicitPath: FileManager.default.homeDirectoryForCurrentUser.path)
+            }
         }
         settingsController?.showWindow(nil)
         settingsController?.window?.makeKeyAndOrderFront(nil)

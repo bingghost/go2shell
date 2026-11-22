@@ -1,17 +1,16 @@
 import AppKit
 import Go2TermCore
+import SwiftUI
 
-/// Settings window host. M4 placeholder; the SwiftUI view arrives in M5.
+/// Hosts the SwiftUI settings view in an AppKit window.
 @MainActor
 final class SettingsWindowController: NSWindowController {
-    convenience init() {
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 320),
-            styleMask: [.titled, .closable, .miniaturizable],
-            backing: .buffered,
-            defer: false
-        )
+    convenience init(testAction: @escaping () -> Void) {
+        let model = SettingsModel()
+        let hosting = NSHostingController(rootView: SettingsView(model: model, testAction: testAction))
+        let window = NSWindow(contentViewController: hosting)
         window.title = L("settings.title")
+        window.styleMask = [.titled, .closable, .miniaturizable]
         window.isReleasedWhenClosed = false
         window.center()
         self.init(window: window)

@@ -149,7 +149,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 | M2 | ✅ | 2026-11-21 | AppleScriptRunner（handler 传参）+ FinderLocator；--print-finder-path 三种情况实测通过 |
 | M3 | ✅ | 2026-11-22 | iTerm2 热启动 10/10、Terminal.app 冷启动和热启动 10/10 通过；**iTerm2 冷启动推迟到 M8 测**（会话就跑在 iTerm 里，没法自己退出 iTerm 来测；用 Scripts/check-iterm-cold.sh 测） |
 | M4 | ✅ | 2026-11-22 | AppController、ErrorPresenter、os.Logger 日志；--open 自测从启动到出现窗口 309ms。**工具栏点击、⌥、reopen、拒绝授权这 4 项手工测试按用户要求移到 M8 测试清单** |
-| M5 | ⬜ | | |
+| M5 | ✅ | 2026-11-22 | SwiftUI 设置窗口；迁移实测通过（iTerm2、命令、didMigrate=1，只迁移一次）；en / zh-Hans 窗口标题验证通过；源码里没有写死的中文。**`Use Window` 语义和界面截图确认移到 M8 测试清单** |
 | M6 | ⬜ | | |
 | M7 | ⬜ | | |
 | M8 | ⬜ | | |

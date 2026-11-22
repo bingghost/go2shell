@@ -12,3 +12,25 @@
 "error.pathNotFound.title" = "The folder no longer exists";
 "error.targetNotRunning.title" = "%@ is not responding";
 "error.scriptFailed.title" = "Could not open the terminal";
+
+/* Settings */
+"settings.section.terminal" = "Terminal";
+"settings.terminal" = "Open folders in";
+"settings.terminalMissing" = "%@ is not installed; Terminal will be used instead.";
+"settings.section.command" = "Command";
+"settings.command" = "Command";
+"settings.command.reset" = "Reset";
+"settings.command.help" = "%PATH% is replaced by the folder path, already quoted for the shell — don't add quotes yourself.";
+"settings.command.preview" = "Preview";
+"settings.command.unsupported" = "%@ can't run a custom command; it just opens in the folder.";
+"settings.section.openMode" = "Open in";
+"settings.openMode" = "Open in";
+"settings.openMode.newWindow" = "New Window";
+"settings.openMode.newTab" = "New Tab";
+"settings.openMode.experimental" = "Experimental: Terminal opens tabs by simulating ⌘T, which needs Accessibility permission. Without it Go2Term opens a new window.";
+"settings.preferSelectedFolder" = "When one folder is selected, open that folder";
+"settings.section.toolbar" = "Finder Toolbar";
+"settings.toolbar.instructions" = "Hold ⌘ and drag Go2Term from the Applications folder onto the toolbar of any Finder window. Click it to open a terminal in that folder; ⌥-click it to open these settings.";
+"settings.toolbar.reveal" = "Show Go2Term in Finder";
+"settings.test" = "Test: Open Terminal in Home Folder";
+"settings.version" = "Version %@";
