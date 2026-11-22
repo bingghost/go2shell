@@ -223,6 +223,8 @@ on openTab(cmd)
 end openTab
 ```
 - 用 `NSRunningApplication.runningApplications(withBundleIdentifier:)` 判断 `wasRunning`，在调用脚本之前判断。
+- **M3 实现**：冷启动时 iTerm 的默认窗口不一定马上出现，所以脚本里的 `waitForWindow()` 最多轮询 2 秒（20 次 × 0.1 秒）。等到窗口就复用它；等不到（比如 iTerm 设置成启动时不开窗口）就新建一个。Terminal.app 冷启动时先 `launch`，同样轮询，再用 `do script ... in front window`。实测 Terminal 冷启动约 2.7 秒，主要是 Terminal 自己的启动时间。
+- **自动化授权**：从 shell 直接运行 `.build/.../Go2Term` 时，授权算在父进程（当前终端）名下；只有从 Finder 或 Dock 启动时，授权才属于 Go2Term 自己。
 
 **AppleTerminalLauncher**（`tell application id "com.apple.Terminal"`）：
 - 新窗口：如果已经在运行，用 `do script cmd` 开新窗口；如果没运行，冷启动时 Terminal 会自动开一个窗口，就用 `do script cmd in front window` 复用它，避免出现两个窗口。

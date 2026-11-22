@@ -145,7 +145,7 @@ M0–M5 完成后就可以替代旧 Go2Shell 日常使用（MVP），合计约 4
 | M0 | ✅ | 2026-11-21 | SPM+Makefile 骨架；Apple Development 签名 + hardened runtime；占位窗口经 osascript 验证 |
 | M1 | ✅ | 2026-11-21 | 核心逻辑 + 49 个 Swift Testing 测试（ShellQuote 经 /bin/sh 往返） |
 | M2 | ✅ | 2026-11-21 | AppleScriptRunner（handler 传参）+ FinderLocator；--print-finder-path 三种情况实测通过 |
-| M3 | ⬜ | | |
+| M3 | ✅ | 2026-11-22 | iTerm2 热启动 10/10、Terminal.app 冷启动和热启动 10/10 通过；**iTerm2 冷启动推迟到 M8 测**（会话就跑在 iTerm 里，没法自己退出 iTerm 来测；用 Scripts/check-iterm-cold.sh 测） |
 | M4 | ⬜ | | |
 | M5 | ⬜ | | |
 | M6 | ⬜ | | |
