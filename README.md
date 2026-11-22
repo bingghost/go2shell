@@ -84,6 +84,12 @@ To change settings, hold **⌥** while clicking the toolbar button, or open Go2S
 
 ## Settings
 
+<p align="center">
+  <img src="docs/images/settings-zh-Hans.png" alt="The Go2Shell settings window, shown in Simplified Chinese" width="520">
+</p>
+
+<p align="center"><sub>The settings window, shown here in Simplified Chinese. It follows the system language.</sub></p>
+
 | Setting | What it does | Default |
 | --- | --- | --- |
 | Open folders in | The terminal to open | Terminal.app |

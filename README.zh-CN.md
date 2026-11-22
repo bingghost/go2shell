@@ -84,6 +84,10 @@ cd go2shell
 
 ## 设置
 
+<p align="center">
+  <img src="docs/images/settings-zh-Hans.png" alt="Go2Shell 设置窗口" width="520">
+</p>
+
 | 设置项 | 作用 | 默认值 |
 | --- | --- | --- |
 | 使用的终端 | 打开哪个终端 | Terminal.app |
